@@ -1,5 +1,10 @@
 package repository
 
+import (
+  "context" 
+  "github.com/mrsubudei/adv-store-service/internal/entity"
+)
+
 type Advert interface{
   Store(ctx context.Context, adv *entity.Advert) error
   GetById(ctx context.Context, id int64) (entity.Advert, error)
