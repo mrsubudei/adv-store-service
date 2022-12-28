@@ -112,7 +112,7 @@ func TestGetById(t *testing.T) {
                 }
         })
 
-        t.Run("Err did not found", func(t *testing.T) {
+        t.Run("Err item not found", func(t *testing.T) {
                 if _, err := repo.GetById(ctx, 4); err == nil {
                          t.Fatalf("Error expected")
                 } else if !errors.Is(err, sql.ErrNoRows) {
@@ -191,7 +191,20 @@ func TestUpdate(t *testing.T) {
                 } else if !reflect.DeepEqual(updatedAdv, found) {
                         t.Fatalf("mismatch: %#v != %#v", updatedAdv, found)
                 }
-        })        
+        })    
+        
+        t.Run("Err item not found", func(t *testing.T) {
+                updatedAdv := entity.Advert{
+                    Id: 15,
+                    Name: "updated name",
+                }   
+                
+                if err := repo.Update(ctx, updatedAdv); err == nil {
+                    t.Fatal("Error expected")
+                } else if !errors.Is(err, entity.ErrItemNotExists) {
+                    t.Fatalf("want: %v, got: %v", entity.ErrItemNotExists, err)
+                }
+        })    
 }
 
 func TestDelete(t *testing.T) {
@@ -225,5 +238,15 @@ func TestDelete(t *testing.T) {
                 } else if !errors.Is(err, sql.ErrNoRows) {
                         t.Fatalf("want: %v, got: %v", sql.ErrNoRows, err)
                 }
-        })        
+        })    
+        
+          t.Run("Err item not found", func(t *testing.T) {
+
+                if err := repo.Delete(ctx, 156); err == nil {
+                    t.Fatal("Error expected")
+                } else if !errors.Is(err, entity.ErrItemNotExists) {
+                    t.Fatalf("want: %v, got: %v", entity.ErrItemNotExists, err)
+                }
+        })  
+        
 }
