@@ -32,11 +32,10 @@ func (s *Service) Create(ctx context.Context, adv entity.Advert) error {
 }
 
 func (s *Service) GetById(ctx context.Context, id int64) (entity.Advert, error) {
-    advert := entity.Advert{}
     adv, err := s.repo.GetById(ctx, id)
      if err != nil {
         if errors.Is(err, sql.ErrNoRows) {
-            return entity.ErrItemNotExists
+            return entity.Advert{}, entity.ErrItemNotExists
         }
         return adv, fmt.Errorf("Service - GetById: %w", err) 
      }
@@ -49,7 +48,7 @@ func (s *Service) GetAll(ctx context.Context) ([]entity.Advert, error) {
         return nil, fmt.Errorf("Service - GetAll: %w", err) 
     }
     if len(adverts) == 0 {
-        return nil, ErrNoItems
+        return nil, entity.ErrNoItems
     }
     return adverts, nil
 }
