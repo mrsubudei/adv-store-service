@@ -159,7 +159,7 @@ func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
 	
 	 tx, err := ar.DB.Begin()
 	if err != nil {
-		return advert, fmt.Errorf("AdvertsRepo - Fetch - Begin: %w", err)
+		return adverts, fmt.Errorf("AdvertsRepo - Fetch - Begin: %w", err)
 	}
 	defer func() {
 		err = tx.Rollback()
@@ -202,7 +202,7 @@ func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
 
 	err = tx.Commit()
 	if err != nil {
-	     return advert, fmt.Errorf("AdvertsRepo - Fetch - Commit: %w", err)
+	     return adverts, fmt.Errorf("AdvertsRepo - Fetch - Commit: %w", err)
 	}
 	
 	return adverts, nil
@@ -378,6 +378,11 @@ func (ar *AdvertsRepo) DeleteUrl(ctx context.Context, url string) error {
 		return fmt.Errorf("deleteUrls - ExecContext #1: %w", err)
 	}
 	
+	affected, err := res.RowsAffected()
+	if affected != 1 || err != nil {
+		return fmt.Errorf("deleteUrls - RowsAffected: %w", err)
+	}
+	
 	res, err = tx.ExecContext(ctx,
 		`DELETE FROM urls
 		WHERE id = ?
@@ -385,6 +390,11 @@ func (ar *AdvertsRepo) DeleteUrl(ctx context.Context, url string) error {
 
 	if err != nil {
 		return fmt.Errorf("deleteUrls - ExecContext #2: %w", err)
+	}
+	
+	affected, err := res.RowsAffected()
+	if affected != 1 || err != nil {
+		return fmt.Errorf("deleteUrls - RowsAffected: %w", err)
 	}
 
 	err = tx.Commit()
