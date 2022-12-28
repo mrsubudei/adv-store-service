@@ -4,7 +4,6 @@ import (
         "reflect"
         "strings"
         "testing"
-        "time"
         "context"
 
         "github.com/mrsubudei/adv-store-service/internal/entity"
@@ -45,9 +44,10 @@ func TestUserStore(t *testing.T) {
                 t.Fatal("Unable to create db:", err)
         }
         repo := sqlite.NewAdvertsRepo(db)
-
-        t.Run("OK", func(t *testing.T) {
         ctx := context.Background()
+        
+        t.Run("OK", func(t *testing.T) {
+        
                 if err := repo.Store(ctx, &advert1); err != nil {
                         t.Fatal("Unable to store:", err)
                 }
@@ -81,7 +81,7 @@ func TestUserStore(t *testing.T) {
                 "http:fs.com/8",
             },
         }   
-                if err = repo.Store(advert3); err == nil {
+                if err = repo.Store(ctx, &advert3); err == nil {
                         t.Fatalf("Error expected")
                 } else if !strings.Contains(err.Error(), "UNIQUE constraint failed: adverts.name") {
                         t.Fatalf("unexpected error: %v", err)
