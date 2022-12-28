@@ -9,7 +9,7 @@ func CreateDB(s *sqlite3.Sqlite) error {
 	adverts := `
 	CREATE TABLE IF NOT EXISTS adverts (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		name TEXT NOT NULL,
+		name TEXT UNIQUE NOT NULL,
 		description TEXT,
 		price INTEGER,
 		photo_url TEXT
