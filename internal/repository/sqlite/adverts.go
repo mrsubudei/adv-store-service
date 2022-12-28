@@ -122,7 +122,7 @@ func (ar *AdvertsRepo) GetById(ctx context.Context, id int64) (entity.Advert, er
 		`SELECT 
 			id, name, description, price, photo_url
 		FROM adverts		 
-		WHERE id = ?`)
+		WHERE id = ?`, id)
 	
 	var description sql.NullString
 	var price sql.NullInt64
