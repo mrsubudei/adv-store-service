@@ -392,7 +392,7 @@ func (ar *AdvertsRepo) DeleteUrl(ctx context.Context, url string) error {
 		return fmt.Errorf("deleteUrls - ExecContext #2: %w", err)
 	}
 	
-	affected, err := res.RowsAffected()
+	affected, err = res.RowsAffected()
 	if affected != 1 || err != nil {
 		return fmt.Errorf("deleteUrls - RowsAffected: %w", err)
 	}
