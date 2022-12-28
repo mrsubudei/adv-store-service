@@ -34,7 +34,7 @@ func CreateDB(s *sqlite3.Sqlite) error {
 	urlReference := `
 	CREATE TABLE IF NOT EXISTS url_reference (
 		advert_id INTEGER,
-		url_id TEXT,
+		url_id INTEGER,
 		PRIMARY KEY (advert_id, url_id),
 		FOREIGN KEY (advert_id) REFERENCES adverts(id)
 		FOREIGN KEY (url_id) REFERENCES urls(id)
