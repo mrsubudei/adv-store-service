@@ -232,7 +232,7 @@ func (ar *AdvertsRepo) Update(ctx context.Context, adv entity.Advert) error {
 
         affected, err := res.RowsAffected()
         if affected != 1 || err != nil {
-                return fmt.Errorf("AdvertsRepo - Update - RowsAffected: %w", err)
+                return entity.ErrItemsNotExist
         }
 
         err = ar.updateUrls(ctx, tx, adv)
@@ -305,7 +305,7 @@ func (ar *AdvertsRepo) deleteAdvert(ctx context.Context, tx *sql.Tx, id int64) e
 
         affected, err := res.RowsAffected()
         if affected != 1 || err != nil {
-                return fmt.Errorf("deleteAdvert - RowsAffected: %w", err)
+                return entity.ErrItemsNotExist
         }
 
         return nil
