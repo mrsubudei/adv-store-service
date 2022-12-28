@@ -93,7 +93,7 @@ func (ar *AdvertsRepo) storeUrls(ctx context.Context, tx *sql.Tx, url string) (i
 
 func (ar *AdvertsRepo) storeReferenceUrls(ctx context.Context, tx *sql.Tx, advId, urlId int64) error {
 	res, err := tx.ExecContext(ctx,
-		`INSERT INTO url_reference(advert_id, url_id) values(?)`,
+		`INSERT INTO url_reference(advert_id, url_id) values(?, ?)`,
 		advId, urlId)
 	if err != nil {
 		return fmt.Errorf("storeReferenceUrls - ExecContext: %w", err)
