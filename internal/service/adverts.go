@@ -6,14 +6,14 @@ import (
   "errors"
   "database/sql"
 	"github.com/mrsubudei/adv-store-service/internal/entity"
-  "github.com/mrsubudei/adv-store-service/internal/repository/sqlite"
+  "github.com/mrsubudei/adv-store-service/internal/repository"
 )
 
 type Service struct {
-    repo sqlite.AdvertsRepo
+    repo repository.Advert
 }
 
-func NewService(repo sqlite.AdvertsRepo) *Service {
+func NewService(repo repository.Advert) *Service {
   return &Service{
     repo: repo,
   } 
