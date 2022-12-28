@@ -146,7 +146,7 @@ func (ar *AdvertsRepo) GetById(ctx context.Context, id int64) (entity.Advert, er
     
     err = tx.Commit()
 	if err != nil {
-		advert, return fmt.Errorf("AdvertsRepo - GetById - Commit: %w", err)
+	   return advert, fmt.Errorf("AdvertsRepo - GetById - Commit: %w", err)
 	}
 	
 	return advert, nil
@@ -202,7 +202,7 @@ func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
 
 	err = tx.Commit()
 	if err != nil {
-		advert, return fmt.Errorf("AdvertsRepo - Fetch - Commit: %w", err)
+	     return advert, fmt.Errorf("AdvertsRepo - Fetch - Commit: %w", err)
 	}
 	
 	return adverts, nil
