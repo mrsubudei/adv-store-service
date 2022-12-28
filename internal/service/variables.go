@@ -1,5 +1,5 @@
 package service
 
 const (
-	UniqueNameErr = "UNIQUE constraint failed: adverts.name"
+	ErrUniqueName = "UNIQUE constraint failed: adverts.name"
 )
