@@ -39,7 +39,7 @@ func (s *Service) GetById(ctx context.Context, id int64) (entity.Advert, error) 
         }
         return adv, fmt.Errorf("Service - GetById: %w", err) 
      }
-     return advert, nil
+     return adv, nil
 }
 
 func (s *Service) GetAll(ctx context.Context) ([]entity.Advert, error) {
