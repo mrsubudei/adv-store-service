@@ -7,4 +7,5 @@ type Advert struct {
 	Price        int64    `json:"price"`
 	MainPhotoUrl string   `json:"main_photo"`
 	PhotosUrls   []string `json:"photos"`
+	CreatedAt    string   `json:"created_at"`
 }

@@ -2,6 +2,7 @@ package sqlite
 
 import (
 	"fmt"
+
 	"github.com/mrsubudei/adv-store-service/pkg/sqlite3"
 )
 
@@ -13,7 +14,8 @@ func CreateDB(s *sqlite3.Sqlite) error {
 		name TEXT UNIQUE NOT NULL,
 		description TEXT,
 		price INTEGER,
-		photo_url TEXT
+		photo_url TEXT,
+		created_at TEXT
 		);
 	`
 
@@ -34,6 +36,6 @@ func CreateDB(s *sqlite3.Sqlite) error {
 	if err != nil {
 		return fmt.Errorf("CreateDB - %w", err)
 	}
-	
+
 	return nil
 }
