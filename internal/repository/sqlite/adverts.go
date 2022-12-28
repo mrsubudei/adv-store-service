@@ -128,7 +128,7 @@ func (ar *AdvertsRepo) GetById(ctx context.Context, id int64) (entity.Advert, er
 	var price sql.NullInt64
 	var url sql.NullString
 
-	err = row.Scan(ctx, &advert.Id, &advert.Name, &description, &price, &url)
+	err = row.Scan(&advert.Id, &advert.Name, &description, &price, &url)
 	if err != nil {
 		return advert, fmt.Errorf("AdvertsRepo - GetById - Scan: %w", err)
 	}
