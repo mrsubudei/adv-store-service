@@ -1,6 +1,7 @@
 package sqlite
 
 import (
+	"fmt"
 	"github.com/mrsubudei/adv-store-service/pkg/sqlite3"
 )
 
