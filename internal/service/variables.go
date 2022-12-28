@@ -1,5 +1,7 @@
 package service
 
+import "errors"
+
 const (
-	ErrUniqueName = "UNIQUE constraint failed: adverts.name"
+	ErrUniqueName = errors.New("UNIQUE constraint failed: adverts.name")
 )
