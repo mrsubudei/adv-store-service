@@ -95,7 +95,7 @@ func (s *Service) Update(ctx context.Context, adv entity.Advert) error {
 func (s *Service) Delete(ctx context.Context, id int64) error {
     err := s.repo.Delete(ctx, id)
     if err != nil {
-        if errors.Is(err, entity.ErrItemNotExists) {
+        if errors.Is(err, sql.ErrNoRows) {
             return entity.ErrItemNotExists
         }
         return fmt.Errorf("Service - Delete: %w", err) 
