@@ -69,8 +69,8 @@ func (ar *AdvertsRepo) storeAdvert(ctx context.Context, tx *sql.Tx, adv *entity.
 
 func (ar *AdvertsRepo) storeUrl(ctx context.Context, tx *sql.Tx, advId int64, url string) error {
 	res, err := tx.ExecContext(ctx,
-		`INSERT INTO photo_urls(advert_id, url) values(?, ?)
-                `, advId, url)
+		`INSERT INTO photo_urls(advert_id, url) values(?, ?)`,
+		advId, url)
 	if err != nil {
 		return fmt.Errorf("storeUrl - ExecContext: %w", err)
 	}

@@ -1,0 +1,8 @@
+ERROR 2022/12/28 21:08:02 v1 - CreateAdvert - Create: AdvertService - Create: AdvertsRepo - Store - storeAdvert - ExecContext: UNIQUE constraint failed: adverts.name
+ERROR 2022/12/28 21:08:21 v1 - CreateAdvert - Create: AdvertService - Create: AdvertsRepo - Store - storeAdvert - ExecContext: UNIQUE constraint failed: adverts.name
+ERROR 2022/12/28 21:20:26 v1 - CreateAdvert - Create: AdvertService - Create: AdvertsRepo - Store - storeAdvert - ExecContext: UNIQUE constraint failed: adverts.name
+ERROR 2022/12/28 21:20:44 v1 - CreateAdvert - Create: AdvertService - Create: AdvertsRepo - Store - storeAdvert - ExecContext: UNIQUE constraint failed: adverts.name
+ERROR 2022/12/28 21:31:44 v1 - CreateAdvert - Create: AdvertService - Create: AdvertsRepo - Store - storeAdvert - ExecContext: UNIQUE constraint failed: adverts.name
+ERROR 2022/12/28 21:33:00 v1 - CreateAdvert - Create: AdvertService - Create: AdvertsRepo - Store - storeAdvert - ExecContext: UNIQUE constraint failed: adverts.name
+ERROR 2022/12/28 23:44:15 v1 - CreateAdvert - parseJson: wrong data format
+INFO: 2022/12/28 23:47:18 v1 - CreateAdvert - parseJson: wrong data format

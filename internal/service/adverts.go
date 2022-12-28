@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/mrsubudei/adv-store-service/internal/entity"
@@ -12,16 +13,12 @@ import (
 )
 
 type AdvertService struct {
-	repo      repository.Advert
-	creatTime func() string
+	repo repository.Advert
 }
 
 func NewAdvertService(repo repository.Advert) *AdvertService {
 	return &AdvertService{
 		repo: repo,
-		creatTime: func() string {
-			return getTime()
-		},
 	}
 }
 
@@ -31,11 +28,11 @@ func getTime() string {
 }
 
 func (s *AdvertService) Create(ctx context.Context, adv entity.Advert) (int64, error) {
-	adv.CreatedAt = s.creatTime()
+	adv.CreatedAt = getTime()
 
 	err := s.repo.Store(ctx, &adv)
 	if err != nil {
-		if errors.Is(err, ErrUniqueName) {
+		if strings.Contains(err.Error(), ErrUniqueName) {
 			return 0, entity.ErrNameAlreadyExist
 		}
 		return 0, fmt.Errorf("AdvertService - Create: %w", err)
