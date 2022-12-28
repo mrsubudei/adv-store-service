@@ -18,32 +18,21 @@ func CreateDB(s *sqlite3.Sqlite) error {
 
 	_, err := s.DB.Exec(adverts)
 	if err != nil {
-		return err
+		return fmt.Errorf("CreateDB - %w", err)
 	}
 
 	urls := `
-	CREATE TABLE IF NOT EXISTS urls (
-		id INTEGER PRIMARY KEY AUTOINCREMENT,
-		photo_url TEXT
+	CREATE TABLE IF NOT EXISTS photo_urls (
+		advert_id INTEGER,
+		url TEXT,
+		PRIMARY KEY (advert_id, url),
+		FOREIGN KEY (advert_id) REFERENCES adverts(id)
 		);
 	`
 	_, err = s.DB.Exec(urls)
 	if err != nil {
-		return err
+		return fmt.Errorf("CreateDB - %w", err)
 	}
-	urlReference := `
-	CREATE TABLE IF NOT EXISTS url_reference (
-		advert_id INTEGER,
-		url_id INTEGER,
-		PRIMARY KEY (advert_id, url_id),
-		FOREIGN KEY (advert_id) REFERENCES adverts(id)
-		FOREIGN KEY (url_id) REFERENCES urls(id)
-		);
-	`
-	_, err = s.DB.Exec(urlReference)
-	if err != nil {
-		return err
-	}
-
+	
 	return nil
 }
