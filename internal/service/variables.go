@@ -2,6 +2,6 @@ package service
 
 import "errors"
 
-const (
+var (
 	ErrUniqueName = errors.New("UNIQUE constraint failed: adverts.name")
 )
