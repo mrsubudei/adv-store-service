@@ -32,11 +32,7 @@ func (ar *AdvertsRepo) Store(ctx context.Context, adv *entity.Advert) error {
 	}
 
 	for i := 0; i < len(adv.PhotosUrls); i++ {
-		referenceId, err := ar.storeUrls(ctx, tx, adv.PhotosUrls[i])
-		if err != nil {
-			return fmt.Errorf("AdvertsRepo - Store - %w", err)
-		}
-		err = ar.storeReferenceUrls(ctx, tx, adv.Id, referenceId)
+		err := ar.storeUrl(ctx, tx, adv.Id, adv.PhotosUrls[i])
 		if err != nil {
 			return fmt.Errorf("AdvertsRepo - Store - %w", err)
 		}
@@ -71,37 +67,17 @@ func (ar *AdvertsRepo) storeAdvert(ctx context.Context, tx *sql.Tx, adv *entity.
 	return nil
 }
 
-func (ar *AdvertsRepo) storeUrls(ctx context.Context, tx *sql.Tx, url string) (int64, error) {
+func (ar *AdvertsRepo) storeUrl(ctx context.Context, tx *sql.Tx, advId int64, url string) error {
 	res, err := tx.ExecContext(ctx,
-		`INSERT INTO urls(photo_url) values(?)`,
-		url)
+		`INSERT INTO photo_urls(advert_id, url) values(?, ?)
+		`, advId, url)
 	if err != nil {
-		return 0, fmt.Errorf("storeUrls - ExecContext: %w", err)
+		return fmt.Errorf("storeUrl - ExecContext: %w", err)
 	}
 
 	affected, err := res.RowsAffected()
 	if affected != 1 || err != nil {
-		return 0, fmt.Errorf("storeUrls - RowsAffected: %w", err)
-	}
-	id, err := res.LastInsertId()
-	if err != nil {
-		return 0, fmt.Errorf("storeUrls - LastInsertId: %w", err)
-	}
-
-	return id, nil
-}
-
-func (ar *AdvertsRepo) storeReferenceUrls(ctx context.Context, tx *sql.Tx, advId, urlId int64) error {
-	res, err := tx.ExecContext(ctx,
-		`INSERT INTO url_reference(advert_id, url_id) values(?, ?)`,
-		advId, urlId)
-	if err != nil {
-		return fmt.Errorf("storeReferenceUrls - ExecContext: %w", err)
-	}
-
-	affected, err := res.RowsAffected()
-	if affected != 1 || err != nil {
-		return fmt.Errorf("storeReferenceUrls - RowsAffected: %w", err)
+		return fmt.Errorf("storeUrl - RowsAffected: %w", err)
 	}
 
 	return nil
@@ -196,7 +172,7 @@ func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
 	        return adverts, fmt.Errorf("AdvertsRepo - Fetch - %w", err)
     	}
     
-         advert.PhotosUrls = append( advert.PhotosUrls, urls...)
+        advert.PhotosUrls = append(advert.PhotosUrls, urls...)
 		adverts = append(adverts, advert)
 	}
 
@@ -208,41 +184,15 @@ func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
 	return adverts, nil
 }
 
-func (ar *AdvertsRepo) getUrlIds(ctx context.Context, tx *sql.Tx, advId int64) ([]int64, error) {
-	urlIds := []int64{}
-	rows, err := tx.QueryContext(ctx,
-		`SELECT url_id
-		FROM url_reference
-		WHERE advert_id = ?		 
-	`, advId)
-	if err != nil {
-		return urlIds, fmt.Errorf("AdvertsRepo - getUrlIds - Exec: %w", err)
-	}
-
-	defer rows.Close()
-
-	for rows.Next() {
-		var id int64
-
-		err = rows.Scan(ctx, &id)
-		if err != nil {
-			return urlIds, fmt.Errorf("AdvertsRepo - getUrlIds - Scan: %w", err)
-		}
-		urlIds = append(urlIds, id)
-	}
-
-	return urlIds, nil
-}
-
 func (ar *AdvertsRepo) getUrls(ctx context.Context, tx *sql.Tx, advId int64) ([]string, error) {
 	urls := []string{}
 	rows, err := tx.QueryContext(ctx,
-		`SELECT photo_url
-		FROM urls
-		WHERE id = (SELECT url_id FROM url_reference WHERE url_reference.advert_id = ?)		 
-	`)
+		`SELECT url
+		FROM photo_urls
+		WHERE advert_id = ?		 
+	`, advId)
 	if err != nil {
-		return urls, fmt.Errorf("AdvertsRepo - getUrls - QueryContext: %w", err)
+		return urls, fmt.Errorf("getUrls - Exec: %w", err)
 	}
 
 	defer rows.Close()
@@ -250,9 +200,9 @@ func (ar *AdvertsRepo) getUrls(ctx context.Context, tx *sql.Tx, advId int64) ([]
 	for rows.Next() {
 		var url sql.NullString
 
-		err = rows.Scan(ctx, &url)
+		err = rows.Scan(&url)
 		if err != nil {
-			return urls, fmt.Errorf("AdvertsRepo - getUrls - Scan: %w", err)
+			return urls, fmt.Errorf("getUrls - Scan: %w", err)
 		}
 		urls = append(urls, url.String)
 	}
@@ -297,12 +247,7 @@ func (ar *AdvertsRepo) Delete(ctx context.Context, id int64) error {
 		if err != nil {
 			return fmt.Errorf("AdvertsRepo - Delete - %w", err)
 		}
-		err = ar.deleteReferenceUrls(ctx, tx, id)
-		if err != nil {
-			return fmt.Errorf("AdvertsRepo - Delete - %w", err)
-		}
 	
-
 	err = tx.Commit()
 	if err != nil {
 		return fmt.Errorf("AdvertsRepo - Delete - Commit: %w", err)
@@ -331,8 +276,8 @@ func (ar *AdvertsRepo) deleteAdvert(ctx context.Context, tx *sql.Tx, id int64) e
 
 func (ar *AdvertsRepo) deleteUrls(ctx context.Context, tx *sql.Tx, id int64) error {
 	_, err := tx.ExecContext(ctx,                                          
-		`DELETE FROM urls
-		WHERE id = (SELECT url_id FROM url_reference WHERE url_reference.advert_id = ?)
+		`DELETE FROM photo_urls
+		WHERE advert_id = ?
 		`, id)
 
 	if err != nil {
@@ -342,64 +287,21 @@ func (ar *AdvertsRepo) deleteUrls(ctx context.Context, tx *sql.Tx, id int64) err
 	return nil
 }
 
-func (ar *AdvertsRepo) deleteReferenceUrls(ctx context.Context, tx *sql.Tx, id int64) error {
-	res, err := tx.ExecContext(ctx,
-		`DELETE FROM url_reference
-		WHERE advert_id = ?
-		`, id)
 
-	if err != nil {
-		return fmt.Errorf("deleteReferenceUrls - ExecContext: %w", err)
-	}
-
-	affected, err := res.RowsAffected()
-	if affected != 1 || err != nil {
-		return fmt.Errorf("deleteReferenceUrls - RowsAffected: %w", err)
-	}
-
-	return nil
-}
-
-func (ar *AdvertsRepo) DeleteUrl(ctx context.Context, url string) error {
+func (ar *AdvertsRepo) DeleteUrls(ctx context.Context, id int64) error {
 	tx, err := ar.DB.Begin()
 	if err != nil {
-		return fmt.Errorf("AdvertsRepo - DeleteUrl - Begin: %w", err)
+		return fmt.Errorf("AdvertsRepo - DeleteUrls - Begin: %w", err)
 	}
 	defer func() {
 		err = tx.Rollback()
 	}()
 
-	res, err := tx.ExecContext(ctx,
-		`DELETE FROM url_reference
-		WHERE url_id = (SELECT id FROM urls WHERE urls.id = ?)
-		`, url)
-
-	if err != nil {
-		return fmt.Errorf("deleteUrls - ExecContext #1: %w", err)
-	}
-	
-	affected, err := res.RowsAffected()
-	if affected != 1 || err != nil {
-		return fmt.Errorf("deleteUrls - RowsAffected: %w", err)
-	}
-	
-	res, err = tx.ExecContext(ctx,
-		`DELETE FROM urls
-		WHERE id = ?
-		`, url)
-
-	if err != nil {
-		return fmt.Errorf("deleteUrls - ExecContext #2: %w", err)
-	}
-	
-	affected, err = res.RowsAffected()
-	if affected != 1 || err != nil {
-		return fmt.Errorf("deleteUrls - RowsAffected: %w", err)
-	}
-
+    err = ar.deleteUrls(ctx, tx, id)
+    
 	err = tx.Commit()
 	if err != nil {
-		return fmt.Errorf("AdvertsRepo - DeleteUrl - Commit: %w", err)
+		return fmt.Errorf("AdvertsRepo - DeleteUrls - Commit: %w", err)
 	}
 
 	return nil
