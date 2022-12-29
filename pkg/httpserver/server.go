@@ -28,7 +28,7 @@ func NewServer(handler *v1.Handler) *Server {
 }
 
 func (s *Server) Run() error {
-	s.h.RegisterRoutes(s.h.Mux)
+	s.h.Mux.HandleFunc("/v1/", s.h.NewGroup)
 	return s.httpServer.ListenAndServe()
 }
 
