@@ -132,3 +132,15 @@ func (h *Handler) checkData(adv entity.Advert) ErrMessage {
 	}
 	return errMsg
 }
+
+func (h *Handler) checkQuery(r *http.Request) (ErrMessage, bool) {
+	errMsg := ErrMessage{code: http.StatusBadRequest, Error: WrongQueryRequest}
+	if val := r.URL.Query().Get(QueryFields); val != "" && val != QueryValueTrue {
+		errMsg.Detail = `"fields=" query should have value "true"`
+	}
+	if val := r.URL.Query().Get(QueryLimit); val != "" && val != QueryValueTrue {
+		errMsg.Detail = `"fields=" query should have value "true"`
+	}
+
+	return errMsg, true
+}

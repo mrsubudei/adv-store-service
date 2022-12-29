@@ -6,11 +6,3 @@ const (
 )
 
 type ContextKey string
-
-const (
-	KeyId      ContextKey = "id"
-	KeyLimit   ContextKey = "limit"
-	KeyOffset  ContextKey = "offset"
-	KeySortBy  ContextKey = "sort"
-	KeyOrderBy ContextKey = "order"
-)

@@ -42,10 +42,20 @@ type Pagination struct {
 }
 
 const (
+	WrongQueryRequest  = "queries have wrong value"
 	EmptyFiledRequest  = "request has empty fields"
 	WrongDataFormat    = "wrong data format"
 	AdvertCreated      = "advert created"
 	DescLengthExceeded = "description length exceeded"
 	NameLengthExceeded = "name length exceeded"
 	UrlsNumberExceeded = "photo_urls quantity exceeded"
+)
+
+const (
+	QueryFields    = "fields"
+	QueryLimit     = "limit"
+	QueryOffset    = "offset"
+	QuerySortBy    = "sort_by"
+	QueryOrderBy   = "order_by"
+	QueryValueTrue = "true"
 )

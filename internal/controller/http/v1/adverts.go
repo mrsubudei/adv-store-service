@@ -45,8 +45,9 @@ func (h *Handler) CreateAdvert(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAllAdverts(w http.ResponseWriter, r *http.Request) {
-	queries := []string{"limit", "offset", "sort_by", "order_by"}
-	keys := []entity.ContextKey{entity.KeyLimit, entity.KeyOffset, entity.KeySortBy, entity.KeyOrderBy}
+	queries := []string{QueryLimit, QueryOffset, QuerySortBy, QueryOrderBy}
+	keys := []entity.ContextKey{entity.KeyLimit, entity.KeyOffset, entity.KeySortBy,
+		entity.KeyOrderBy}
 	ctx := r.Context()
 	for i := 0; i < len(queries); i++ {
 		if val := r.URL.Query().Get(queries[i]); val != "" {
@@ -101,7 +102,7 @@ func (h *Handler) GetAdvert(w http.ResponseWriter, r *http.Request) {
 
 	ans := SingleResponse{code: http.StatusAccepted}
 
-	if r.URL.Query().Get("fields") == "true" {
+	if r.URL.Query().Get(QueryFields) == QueryValueTrue {
 		ans.Data = found
 	} else {
 		ans.Data.Name = found.Name
