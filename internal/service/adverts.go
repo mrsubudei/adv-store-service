@@ -32,7 +32,7 @@ func (s *AdvertService) Create(ctx context.Context, adv entity.Advert) (int64, e
 
 	err := s.repo.Store(ctx, &adv)
 	if err != nil {
-		if strings.Contains(err.Error(), ErrUniqueName) {
+		if strings.Contains(err.Error(), UniqueNameConstraint) {
 			return 0, entity.ErrNameAlreadyExist
 		}
 		return 0, fmt.Errorf("AdvertService - Create: %w", err)

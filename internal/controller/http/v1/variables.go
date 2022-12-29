@@ -1,16 +1,48 @@
 package v1
 
-type ErrMessage struct {
-    Error string `json:"error"`
-    Detail string `json:"detail"`
-    code    int
+import "github.com/mrsubudei/adv-store-service/internal/entity"
+
+type Answer interface {
+	getCode() int
 }
 
+type ErrMessage struct {
+	Error  string `json:"error"`
+	Detail string `json:"detail"`
+	code   int
+}
+
+type SingleResponse struct {
+	Data entity.Advert `json:"data"`
+	code int
+}
+
+type MultiResponse struct {
+	Data []entity.Advert `json:"data"`
+	code int
+}
+
+func (r SingleResponse) getCode() int {
+	return r.code
+}
+
+func (r MultiResponse) getCode() int {
+	return r.code
+}
+
+func (e ErrMessage) getCode() int {
+	return e.code
+}
+
+type ContextKey string
+
+const KeyId ContextKey = "id"
+
 const (
-        EmptyFiledRequest  = "request has empty fields"
-        WrongDataFormat    = "wrong data format"
-        AdvertCreated      = "advert created"
-        DescLengthExceeded = "description length exceeded"
-        NameLengthExceeded = "name length exceeded"
-        UrlsNumberExceeded = "photo_urls quantity exceeded"
+	EmptyFiledRequest  = "request has empty fields"
+	WrongDataFormat    = "wrong data format"
+	AdvertCreated      = "advert created"
+	DescLengthExceeded = "description length exceeded"
+	NameLengthExceeded = "name length exceeded"
+	UrlsNumberExceeded = "photo_urls quantity exceeded"
 )

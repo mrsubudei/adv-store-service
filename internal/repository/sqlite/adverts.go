@@ -48,8 +48,9 @@ func (ar *AdvertsRepo) Store(ctx context.Context, adv *entity.Advert) error {
 
 func (ar *AdvertsRepo) storeAdvert(ctx context.Context, tx *sql.Tx, adv *entity.Advert) error {
 	res, err := tx.ExecContext(ctx,
-		`INSERT INTO adverts(name, description, price, photo_url, created_at) values(?, ?, ?, ?, ?)`,
-		adv.Name, adv.Description, adv.Price, adv.MainPhotoUrl, adv.CreatedAt)
+		`INSERT INTO adverts(name, description, price, photo_url, created_at) 
+		values(?, ?, ?, ?, ?)`,
+		adv.Name, adv.Description, adv.Price, adv.PhotosUrls[0], adv.CreatedAt)
 	if err != nil {
 		return fmt.Errorf("storeAdvert - ExecContext: %w", err)
 	}
@@ -162,7 +163,8 @@ func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
 	return adverts, nil
 }
 
-func (ar *AdvertsRepo) getUrls(ctx context.Context, tx *sql.Tx, advId int64) ([]string, error) {
+func (ar *AdvertsRepo) getUrls(ctx context.Context, tx *sql.Tx,
+	advId int64) ([]string, error) {
 	urls := []string{}
 	rows, err := tx.QueryContext(ctx,
 		`SELECT url
@@ -226,7 +228,8 @@ func (ar *AdvertsRepo) Update(ctx context.Context, adv entity.Advert) error {
 	return nil
 }
 
-func (ar *AdvertsRepo) updateUrls(ctx context.Context, tx *sql.Tx, adv entity.Advert) error {
+func (ar *AdvertsRepo) updateUrls(ctx context.Context, tx *sql.Tx,
+	adv entity.Advert) error {
 	err := ar.deleteUrls(ctx, tx, adv.Id)
 	if err != nil {
 		return fmt.Errorf("updateUrls - %w", err)

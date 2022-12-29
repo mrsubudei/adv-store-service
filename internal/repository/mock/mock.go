@@ -20,7 +20,7 @@ func NewMockRepo() *MockRepo {
 func (mr *MockRepo) Store(ctx context.Context, adv *entity.Advert) error {
 	for i := 0; i < len(mr.Adverts); i++ {
 		if mr.Adverts[i].Id == adv.Id {
-			return fmt.Errorf(service.ErrUniqueName)
+			return fmt.Errorf(service.UniqueNameConstraint)
 		}
 	}
 	mr.Adverts = append(mr.Adverts, *adv)

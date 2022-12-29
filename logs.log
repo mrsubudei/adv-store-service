@@ -6,3 +6,8 @@ ERROR 2022/12/28 21:31:44 v1 - CreateAdvert - Create: AdvertService - Create: Ad
 ERROR 2022/12/28 21:33:00 v1 - CreateAdvert - Create: AdvertService - Create: AdvertsRepo - Store - storeAdvert - ExecContext: UNIQUE constraint failed: adverts.name
 ERROR 2022/12/28 23:44:15 v1 - CreateAdvert - parseJson: wrong data format
 INFO: 2022/12/28 23:47:18 v1 - CreateAdvert - parseJson: wrong data format
+ERROR 2022/12/29 21:01:07 v1 - GetAdvert - TypeAssertion:got data of type int64 but wanted int
+INFO: 2022/12/29 21:21:13 v1 - UpdateAdvert - parseJson: wrong data format
+INFO: 2022/12/29 21:22:40 v1 - UpdateAdvert - h.Service.Update: item not exists
+INFO: 2022/12/29 21:24:19 v1 - UpdateAdvert - h.Service.Update: item not exists
+INFO: 2022/12/29 21:27:29 v1 - GetAdvert - h.Service.GetById: item not exists
