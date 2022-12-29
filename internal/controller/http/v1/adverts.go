@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -44,7 +45,16 @@ func (h *Handler) CreateAdvert(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAllAdverts(w http.ResponseWriter, r *http.Request) {
-	advs, err := h.Service.GetAll(r.Context())
+	queries := []string{"limit", "offset", "sort_by", "order_by"}
+	keys := []entity.ContextKey{entity.KeyLimit, entity.KeyOffset, entity.KeySortBy, entity.KeyOrderBy}
+	ctx := r.Context()
+	for i := 0; i < len(queries); i++ {
+		if val := r.URL.Query().Get(queries[i]); val != "" {
+			ctx = context.WithValue(ctx, keys[i], val)
+		}
+	}
+
+	advs, err := h.Service.GetAll(ctx)
 	if err != nil {
 		if errors.Is(err, entity.ErrNoItems) {
 			h.l.WriteLog(fmt.Errorf("v1 - GetAllAdverts - h.Service.GetAll: %w", err))
@@ -66,7 +76,7 @@ func (h *Handler) GetAllAdverts(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) GetAdvert(w http.ResponseWriter, r *http.Request) {
-	id, ok := r.Context().Value(KeyId).(int64)
+	id, ok := r.Context().Value(entity.KeyId).(int64)
 	if !ok {
 		h.l.WriteLog(fmt.Errorf("v1 - GetAdvert - TypeAssertion:"+
 			"got data of type %T but wanted int", id))

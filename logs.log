@@ -11,3 +11,8 @@ INFO: 2022/12/29 21:21:13 v1 - UpdateAdvert - parseJson: wrong data format
 INFO: 2022/12/29 21:22:40 v1 - UpdateAdvert - h.Service.Update: item not exists
 INFO: 2022/12/29 21:24:19 v1 - UpdateAdvert - h.Service.Update: item not exists
 INFO: 2022/12/29 21:27:29 v1 - GetAdvert - h.Service.GetById: item not exists
+INFO: 2022/12/29 22:15:05 v1 - GetAdvert - h.Service.GetById: item not exists
+INFO: 2022/12/29 22:19:15 v1 - CreateAdvert - h.Service.Create: name already exists
+INFO: 2022/12/29 22:19:22 v1 - CreateAdvert - h.Service.Create: name already exists
+ERROR 2022/12/29 22:28:15 v1 - CreateAdvert - h.Service.Create: AdvertService - GetAll: AdvertsRepo - Fetch - QueryContext: no such column: created
+INFO: 2022/12/29 23:56:48 v1 - GetAllAdverts - h.Service.GetAll: there are no items

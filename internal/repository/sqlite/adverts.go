@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strconv"
 
 	"github.com/mrsubudei/adv-store-service/internal/entity"
 	"github.com/mrsubudei/adv-store-service/pkg/sqlite3"
@@ -97,7 +98,7 @@ func (ar *AdvertsRepo) GetById(ctx context.Context, id int64) (entity.Advert, er
 
 	row := tx.QueryRowContext(ctx,
 		`SELECT 
-            id, name, description, price, photo_url, created_at
+            id, name, description, price, photo_url
         FROM adverts             
         WHERE id = ?`, id)
 
@@ -105,7 +106,7 @@ func (ar *AdvertsRepo) GetById(ctx context.Context, id int64) (entity.Advert, er
 	var price sql.NullInt64
 	var url sql.NullString
 
-	err = row.Scan(&advert.Id, &advert.Name, &description, &price, &url, &advert.CreatedAt)
+	err = row.Scan(&advert.Id, &advert.Name, &description, &price, &url)
 	if err != nil {
 		return advert, fmt.Errorf("AdvertsRepo - GetById - Scan: %w", err)
 	}
@@ -131,13 +132,37 @@ func (ar *AdvertsRepo) GetById(ctx context.Context, id int64) (entity.Advert, er
 }
 
 func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
-	adverts := []entity.Advert{}
 
-	rows, err := ar.DB.QueryContext(ctx,
-		`SELECT 
-            name, price, photo_url, created_at
-            FROM adverts             
-        `)
+	adverts := []entity.Advert{}
+	limit := 10
+	offset := 0
+	sortBy := "id"
+	orderBy := "asc"
+
+	if val, ok := ctx.Value(entity.KeyLimit).(string); ok && val != "" {
+		if parsedToInt, err := strconv.Atoi(val); err == nil {
+			limit = parsedToInt
+		}
+	}
+	if val, ok := ctx.Value(entity.KeyOffset).(string); ok && val != "" {
+		if parsedToInt, err := strconv.Atoi(val); err == nil {
+			offset = parsedToInt
+		}
+	}
+	if val, ok := ctx.Value(entity.KeySortBy).(string); ok && val != "" {
+		if val == "price" {
+			sortBy = val
+		}
+	}
+	if val, ok := ctx.Value(entity.KeyOrderBy).(string); ok && val != "" {
+		orderBy = val
+	}
+
+	query := fmt.Sprintf(`SELECT name, price, photo_url FROM adverts
+	WHERE oid NOT IN (SELECT oid FROM adverts ORDER BY %v %v LIMIT %d)
+	ORDER BY %v %v LIMIT %v`, sortBy, orderBy, offset, sortBy, orderBy, limit)
+
+	rows, err := ar.DB.QueryContext(ctx, query)
 	if err != nil {
 		return adverts, fmt.Errorf("AdvertsRepo - Fetch - QueryContext: %w", err)
 	}
@@ -149,7 +174,7 @@ func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
 		var price sql.NullInt64
 		var url sql.NullString
 
-		err = rows.Scan(&advert.Name, &price, &url, &advert.CreatedAt)
+		err = rows.Scan(&advert.Name, &price, &url)
 		if err != nil {
 			return adverts, fmt.Errorf("AdvertsRepo - Fetch - Scan: %w", err)
 		}
@@ -201,9 +226,9 @@ func (ar *AdvertsRepo) Update(ctx context.Context, adv entity.Advert) error {
 
 	res, err := tx.ExecContext(ctx,
 		`UPDATE adverts 
-                SET name = ?, description = ?, price = ?, photo_url = ?
-                WHERE id = ? 
-                `, adv.Name, adv.Description, adv.Price, adv.MainPhotoUrl, adv.Id)
+            SET name = ?, description = ?, price = ?, photo_url = ?
+            WHERE id = ? 
+            `, adv.Name, adv.Description, adv.Price, adv.MainPhotoUrl, adv.Id)
 
 	if err != nil {
 		return fmt.Errorf("AdvertsRepo - Update - ExecContext: %w", err)
@@ -276,8 +301,8 @@ func (ar *AdvertsRepo) Delete(ctx context.Context, id int64) error {
 func (ar *AdvertsRepo) deleteAdvert(ctx context.Context, tx *sql.Tx, id int64) error {
 	res, err := tx.ExecContext(ctx,
 		`DELETE FROM adverts
-                WHERE id = ?
-                `, id)
+            WHERE id = ?
+            `, id)
 
 	if err != nil {
 		return fmt.Errorf("deleteAdvert - ExecContext: %w", err)
@@ -294,8 +319,8 @@ func (ar *AdvertsRepo) deleteAdvert(ctx context.Context, tx *sql.Tx, id int64) e
 func (ar *AdvertsRepo) deleteUrls(ctx context.Context, tx *sql.Tx, id int64) error {
 	_, err := tx.ExecContext(ctx,
 		`DELETE FROM photo_urls
-                WHERE advert_id = ?
-                `, id)
+            WHERE advert_id = ?
+            `, id)
 
 	if err != nil {
 		return fmt.Errorf("deleteUrls - ExecContext: %w", err)

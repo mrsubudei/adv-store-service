@@ -34,9 +34,12 @@ func (e ErrMessage) getCode() int {
 	return e.code
 }
 
-type ContextKey string
-
-const KeyId ContextKey = "id"
+type Pagination struct {
+	Limit   int
+	Offset  int
+	SortBy  string
+	OrderBy string
+}
 
 const (
 	EmptyFiledRequest  = "request has empty fields"

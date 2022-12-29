@@ -59,7 +59,7 @@ func (h *Handler) NewParticularRoutes(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ctx := context.WithValue(r.Context(), KeyId, int64(id))
+	ctx := context.WithValue(r.Context(), entity.KeyId, int64(id))
 
 	switch r.Method {
 	case http.MethodGet:
