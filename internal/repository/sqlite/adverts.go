@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strconv"
 
 	"github.com/mrsubudei/adv-store-service/internal/entity"
 	"github.com/mrsubudei/adv-store-service/pkg/sqlite3"
@@ -132,22 +131,18 @@ func (ar *AdvertsRepo) GetById(ctx context.Context, id int64) (entity.Advert, er
 }
 
 func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
-
 	adverts := []entity.Advert{}
+	
 	limit := 10
 	offset := 0
 	sortBy := "id"
 	orderBy := "asc"
-
-	if val, ok := ctx.Value(entity.KeyLimit).(string); ok && val != "" {
-		if parsedToInt, err := strconv.Atoi(val); err == nil {
-			limit = parsedToInt
-		}
+    fmt.Println(ctx.Value(entity.KeyLimit))
+	if val, ok := ctx.Value(entity.KeyLimit).(int); ok && val != 0 {
+		limit = val
 	}
-	if val, ok := ctx.Value(entity.KeyOffset).(string); ok && val != "" {
-		if parsedToInt, err := strconv.Atoi(val); err == nil {
-			offset = parsedToInt
-		}
+	if val, ok := ctx.Value(entity.KeyOffset).(int); ok && val != 0 {
+		offset = val
 	}
 	if val, ok := ctx.Value(entity.KeySortBy).(string); ok && val != "" {
 		if val == "price" {
@@ -181,7 +176,6 @@ func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
 
 		advert.Price = price.Int64
 		advert.MainPhotoUrl = url.String
-
 		adverts = append(adverts, advert)
 	}
 
@@ -204,7 +198,6 @@ func (ar *AdvertsRepo) getUrls(ctx context.Context, tx *sql.Tx,
 
 	for rows.Next() {
 		var url sql.NullString
-
 		err = rows.Scan(&url)
 		if err != nil {
 			return urls, fmt.Errorf("getUrls - Scan: %w", err)
@@ -255,10 +248,12 @@ func (ar *AdvertsRepo) Update(ctx context.Context, adv entity.Advert) error {
 
 func (ar *AdvertsRepo) updateUrls(ctx context.Context, tx *sql.Tx,
 	adv entity.Advert) error {
+	    
 	err := ar.deleteUrls(ctx, tx, adv.Id)
 	if err != nil {
 		return fmt.Errorf("updateUrls - %w", err)
 	}
+	
 	if len(adv.PhotosUrls) != 0 {
 		for i := 0; i < len(adv.PhotosUrls); i++ {
 			err := ar.storeUrl(ctx, tx, adv.Id, adv.PhotosUrls[i])
