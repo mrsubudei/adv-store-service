@@ -18,4 +18,5 @@ const (
 	KeyOffset  ContextKey = "offset"
 	KeySortBy  ContextKey = "sort_by"
 	KeyOrderBy ContextKey = "order_by"
+	KeyFields  ContextKey = "fields"
 )
