@@ -28,8 +28,8 @@ func NewServer(handler *v1.Handler) *Server {
 }
 
 func (s *Server) Run() error {
-	s.h.Mux.HandleFunc("/v1/adverts", s.h.NewCommonRoutes)
-	s.h.Mux.HandleFunc("/v1/adverts/", s.h.NewParticularRoutes)
+	s.h.Mux.Handle("/v1/adverts",  s.h.CheckAndParseQuery(http.HandlerFunc(s.h.NewCommonRoutes)))
+	s.h.Mux.Handle("/v1/adverts/",  s.h.CheckAndParseQuery(http.HandlerFunc(s.h.NewParticularRoutes)))
 	return s.httpServer.ListenAndServe()
 }
 
