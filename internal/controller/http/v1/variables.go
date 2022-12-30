@@ -52,10 +52,14 @@ const (
 )
 
 const (
-	QueryFields    = "fields"
-	QueryLimit     = "limit"
-	QueryOffset    = "offset"
-	QuerySortBy    = "sort_by"
-	QueryOrderBy   = "order_by"
-	QueryValueTrue = "true"
+	QueryFields         = "fields"
+	QueryLimit          = "limit"
+	QueryOffset         = "offset"
+	QuerySortBy         = "sort_by"
+	QueryOrderBy        = "order_by"
+	QueryValueTrue      = "true"
+	QueryValueAsc       = "asc"
+	QueryValueDesc      = "desc"
+	QueryValueCreatedAt = "create_at"
+	QueryValuePrice     = "price"
 )
