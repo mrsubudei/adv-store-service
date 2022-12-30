@@ -57,10 +57,11 @@ func (h *Handler) GetAllAdverts(w http.ResponseWriter, r *http.Request) {
 			Error: http.StatusText(http.StatusInternalServerError), Detail: err.Error()})
 		return
 	}
-
+	maxPage := advs[0].MaxCount
 	ans := MultiResponse{
 		Data: advs,
 		code: http.StatusAccepted,
+		Meta: MetaData{MaxPage: maxPage},
 	}
 	h.writeResponse(w, ans)
 }

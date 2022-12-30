@@ -18,8 +18,13 @@ type SingleResponse struct {
 }
 
 type MultiResponse struct {
+	Meta MetaData        `json:"meta_data"`
 	Data []entity.Advert `json:"data"`
 	code int
+}
+
+type MetaData struct {
+	MaxPage int64 `json:"max_page"`
 }
 
 func (r SingleResponse) getCode() int {

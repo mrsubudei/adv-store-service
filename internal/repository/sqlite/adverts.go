@@ -96,8 +96,7 @@ func (ar *AdvertsRepo) GetById(ctx context.Context, id int64) (entity.Advert, er
 	}()
 
 	row := tx.QueryRowContext(ctx,
-		`SELECT 
-            id, name, description, price, photo_url
+		`SELECT id, name, description, price, photo_url
         FROM adverts             
         WHERE id = ?`, id)
 
@@ -132,12 +131,11 @@ func (ar *AdvertsRepo) GetById(ctx context.Context, id int64) (entity.Advert, er
 
 func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
 	adverts := []entity.Advert{}
-	
+
 	limit := 10
 	offset := 0
 	sortBy := "id"
 	orderBy := "asc"
-    fmt.Println(ctx.Value(entity.KeyLimit))
 	if val, ok := ctx.Value(entity.KeyLimit).(int); ok && val != 0 {
 		limit = val
 	}
@@ -153,9 +151,13 @@ func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
 		orderBy = val
 	}
 
-	query := fmt.Sprintf(`SELECT name, price, photo_url FROM adverts
-	WHERE oid NOT IN (SELECT oid FROM adverts ORDER BY %v %v LIMIT %d)
-	ORDER BY %v %v LIMIT %v`, sortBy, orderBy, offset, sortBy, orderBy, limit)
+	query := fmt.Sprintf(
+		`SELECT name, price, photo_url,
+		(SELECT COUNT(*) FROM adverts) AS count
+		FROM adverts
+		WHERE oid NOT IN (SELECT oid FROM adverts ORDER BY %v %v LIMIT %d)
+		ORDER BY %v %v LIMIT %d`,
+		sortBy, orderBy, offset, sortBy, orderBy, limit)
 
 	rows, err := ar.DB.QueryContext(ctx, query)
 	if err != nil {
@@ -168,17 +170,24 @@ func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
 		var advert entity.Advert
 		var price sql.NullInt64
 		var url sql.NullString
+		var count sql.NullInt64
 
-		err = rows.Scan(&advert.Name, &price, &url)
+		err = rows.Scan(&advert.Name, &price, &url, &count)
 		if err != nil {
 			return adverts, fmt.Errorf("AdvertsRepo - Fetch - Scan: %w", err)
 		}
-
+		advert.MaxCount = count.Int64
 		advert.Price = price.Int64
 		advert.MainPhotoUrl = url.String
 		adverts = append(adverts, advert)
 	}
 
+	count := adverts[0].MaxCount
+	if count%int64(limit) != 0 {
+		adverts[0].MaxCount = count/int64(limit) + 1
+	} else {
+		adverts[0].MaxCount = count / int64(limit)
+	}
 	return adverts, nil
 }
 
@@ -187,8 +196,8 @@ func (ar *AdvertsRepo) getUrls(ctx context.Context, tx *sql.Tx,
 	urls := []string{}
 	rows, err := tx.QueryContext(ctx,
 		`SELECT url
-                FROM photo_urls
-                WHERE advert_id = ?              
+        FROM photo_urls
+        WHERE advert_id = ?              
         `, advId)
 	if err != nil {
 		return urls, fmt.Errorf("getUrls - Exec: %w", err)
@@ -219,9 +228,9 @@ func (ar *AdvertsRepo) Update(ctx context.Context, adv entity.Advert) error {
 
 	res, err := tx.ExecContext(ctx,
 		`UPDATE adverts 
-            SET name = ?, description = ?, price = ?, photo_url = ?
-            WHERE id = ? 
-            `, adv.Name, adv.Description, adv.Price, adv.MainPhotoUrl, adv.Id)
+        SET name = ?, description = ?, price = ?, photo_url = ?
+        WHERE id = ? 
+        `, adv.Name, adv.Description, adv.Price, adv.MainPhotoUrl, adv.Id)
 
 	if err != nil {
 		return fmt.Errorf("AdvertsRepo - Update - ExecContext: %w", err)
@@ -248,12 +257,12 @@ func (ar *AdvertsRepo) Update(ctx context.Context, adv entity.Advert) error {
 
 func (ar *AdvertsRepo) updateUrls(ctx context.Context, tx *sql.Tx,
 	adv entity.Advert) error {
-	    
+
 	err := ar.deleteUrls(ctx, tx, adv.Id)
 	if err != nil {
 		return fmt.Errorf("updateUrls - %w", err)
 	}
-	
+
 	if len(adv.PhotosUrls) != 0 {
 		for i := 0; i < len(adv.PhotosUrls); i++ {
 			err := ar.storeUrl(ctx, tx, adv.Id, adv.PhotosUrls[i])
@@ -296,8 +305,8 @@ func (ar *AdvertsRepo) Delete(ctx context.Context, id int64) error {
 func (ar *AdvertsRepo) deleteAdvert(ctx context.Context, tx *sql.Tx, id int64) error {
 	res, err := tx.ExecContext(ctx,
 		`DELETE FROM adverts
-            WHERE id = ?
-            `, id)
+        WHERE id = ?
+        `, id)
 
 	if err != nil {
 		return fmt.Errorf("deleteAdvert - ExecContext: %w", err)
@@ -314,8 +323,8 @@ func (ar *AdvertsRepo) deleteAdvert(ctx context.Context, tx *sql.Tx, id int64) e
 func (ar *AdvertsRepo) deleteUrls(ctx context.Context, tx *sql.Tx, id int64) error {
 	_, err := tx.ExecContext(ctx,
 		`DELETE FROM photo_urls
-            WHERE advert_id = ?
-            `, id)
+        WHERE advert_id = ?
+        `, id)
 
 	if err != nil {
 		return fmt.Errorf("deleteUrls - ExecContext: %w", err)

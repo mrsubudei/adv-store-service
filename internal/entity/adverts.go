@@ -8,6 +8,7 @@ type Advert struct {
 	MainPhotoUrl string   `json:"main_photo_url"`
 	PhotosUrls   []string `json:"photo_urls"`
 	CreatedAt    string   `json:"-"`
+	MaxCount     int64    `json:"-"`
 }
 
 type ContextKey string
