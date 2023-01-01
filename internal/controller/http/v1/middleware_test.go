@@ -1,23 +1,30 @@
 package v1_test
 
 import (
+	"log"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/mrsubudei/adv-store-service/internal/config"
+	v1 "github.com/mrsubudei/adv-store-service/internal/controller/http/v1"
+	mock "github.com/mrsubudei/adv-store-service/internal/service/mock"
+	"github.com/mrsubudei/adv-store-service/pkg/logger"
 )
 
-// func setup() *v1.Handler {
-// 	cfg, err := config.LoadConfig("../../../../config.json")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-// 	l := logger.New()
+func setup() *v1.Handler {
+	cfg, err := config.LoadConfig("../../../../config.json")
+	if err != nil {
+		log.Fatal(err)
+	}
+	l := logger.New()
 
-// 	mockService := ms.NewMockService()
-// 	handler := v1.NewHandler(mockService, cfg, l)
+	mockService := mock.NewMockService()
+	handler := v1.NewHandler(mockService, cfg, l)
+	handler.NewRouteGroups()
 
-// 	return handler
-// }
+	return handler
+}
 
 // func getMockHandler(t *testing.T, key string) http.HandlerFunc {
 // 	mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

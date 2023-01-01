@@ -30,7 +30,7 @@ func NewServer(handler *v1.Handler) *Server {
 }
 
 func (s *Server) Run() error {
-	s.h.NewRoutes()
+	s.h.NewRouteGroups()
 	return s.httpServer.ListenAndServe()
 }
 

@@ -2,12 +2,13 @@ package v1
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
 	"unicode/utf8"
+
+	"github.com/clarketm/json"
 
 	"github.com/mrsubudei/adv-store-service/internal/config"
 	"github.com/mrsubudei/adv-store-service/internal/entity"
@@ -33,9 +34,14 @@ func NewHandler(advService service.Service, cfg config.Config,
 	}
 }
 
-func (h *Handler) NewRoutes() {
+func (h *Handler) NewRouteGroups() {
 	h.Mux.Handle("/v1/adverts", h.ParseQuery(http.HandlerFunc(h.CommonGroup)))
 	h.Mux.Handle("/v1/adverts/", h.ParseQuery(http.HandlerFunc(h.ParticularGroup)))
+	h.Mux.HandleFunc("/", h.WrongRoute)
+}
+
+func (h *Handler) WrongRoute(w http.ResponseWriter, r *http.Request) {
+	h.writeResponse(w, ErrMessage{code: http.StatusNotFound})
 }
 
 func (h *Handler) CommonGroup(w http.ResponseWriter, r *http.Request) {
@@ -45,8 +51,7 @@ func (h *Handler) CommonGroup(w http.ResponseWriter, r *http.Request) {
 	case http.MethodPost:
 		h.CreateAdvert(w, r)
 	default:
-		h.writeResponse(w, ErrMessage{Error: http.StatusText(http.StatusMethodNotAllowed),
-			code: http.StatusMethodNotAllowed})
+		h.writeResponse(w, ErrMessage{code: http.StatusMethodNotAllowed})
 	}
 }
 
@@ -57,9 +62,8 @@ func (h *Handler) ParticularGroup(w http.ResponseWriter, r *http.Request) {
 		h.l.WriteLog(fmt.Errorf("v1 - NewPluralRoutes - Atoi: %w", err))
 	}
 
-	if len(path) > 4 || len(path) == 2 || path[2] != "adverts" || id <= 0 || err != nil {
-		h.writeResponse(w, ErrMessage{Error: http.StatusText(http.StatusNotFound),
-			code: http.StatusNotFound})
+	if id <= 0 || err != nil || r.URL.Path != "/v1/adverts/"+strconv.Itoa(id) {
+		h.writeResponse(w, ErrMessage{code: http.StatusNotFound})
 		return
 	}
 
@@ -73,8 +77,7 @@ func (h *Handler) ParticularGroup(w http.ResponseWriter, r *http.Request) {
 	case http.MethodDelete:
 		h.DeleteAdvert(w, r.WithContext(ctx))
 	default:
-		h.writeResponse(w, ErrMessage{Error: http.StatusText(http.StatusMethodNotAllowed),
-			code: http.StatusMethodNotAllowed})
+		h.writeResponse(w, ErrMessage{code: http.StatusMethodNotAllowed})
 	}
 }
 
@@ -82,7 +85,7 @@ func (h *Handler) parseJson(w http.ResponseWriter, r *http.Request, adv *entity.
 	err := json.NewDecoder(r.Body).Decode(adv)
 	if err != nil {
 		h.writeResponse(w, ErrMessage{code: http.StatusBadRequest,
-			Error: http.StatusText(http.StatusBadRequest), Detail: "format not correct"})
+			Error: JsonNotCorrect})
 		return fmt.Errorf(WrongDataFormat)
 	}
 
@@ -91,7 +94,6 @@ func (h *Handler) parseJson(w http.ResponseWriter, r *http.Request, adv *entity.
 
 func (h *Handler) writeResponse(w http.ResponseWriter, ans Answer) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
-
 	jsonResp, err := json.Marshal(ans)
 	if err != nil {
 		h.l.WriteLog(fmt.Errorf("v1 - writeResponse - Marshal: %w", err))
@@ -103,36 +105,29 @@ func (h *Handler) writeResponse(w http.ResponseWriter, ans Answer) {
 }
 
 func (h *Handler) checkData(adv entity.Advert) ErrMessage {
-	errMsg := ErrMessage{}
+	errMsg := ErrMessage{code: http.StatusBadRequest}
 	switch {
 	case utf8.RuneCountInString(adv.Description) > 1000:
-		errMsg.code = http.StatusBadRequest
 		errMsg.Error = http.StatusText(http.StatusRequestEntityTooLarge)
 		errMsg.Detail = DescLengthExceeded
 	case utf8.RuneCountInString(adv.Name) > 200:
-		errMsg.code = http.StatusBadRequest
 		errMsg.Error = http.StatusText(http.StatusRequestEntityTooLarge)
 		errMsg.Detail = NameLengthExceeded
 	case len(adv.PhotosUrls) > 3:
-		errMsg.code = http.StatusBadRequest
 		errMsg.Error = http.StatusText(http.StatusRequestEntityTooLarge)
 		errMsg.Detail = UrlsNumberExceeded
 	case adv.Name == "":
-		errMsg.code = http.StatusBadRequest
 		errMsg.Error = EmptyFiledRequest
-		errMsg.Detail = `"name": field is required"`
+		errMsg.Detail = "'name:' field is required"
 	case adv.Description == "":
-		errMsg.code = http.StatusBadRequest
 		errMsg.Error = EmptyFiledRequest
-		errMsg.Detail = `"description": field is required"`
+		errMsg.Detail = `'description:' field is required"`
 	case adv.Price == 0:
-		errMsg.code = http.StatusBadRequest
 		errMsg.Error = EmptyFiledRequest
-		errMsg.Detail = `"price": field is required`
+		errMsg.Detail = `'price:' field is required`
 	case len(adv.PhotosUrls) == 0:
-		errMsg.code = http.StatusBadRequest
 		errMsg.Error = EmptyFiledRequest
-		errMsg.Detail = `"photo_urls:" field should have at least 1 url`
+		errMsg.Detail = `'photo_urls:' field should have at least 1 url`
 	}
 
 	return errMsg

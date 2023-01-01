@@ -11,6 +11,7 @@ import (
 
 type MockService struct {
 	Adverts []entity.Advert
+	Ids     int64
 }
 
 func NewMockService() *MockService {
@@ -18,18 +19,33 @@ func NewMockService() *MockService {
 }
 
 func (ms *MockService) Create(ctx context.Context, adv entity.Advert) (int64, error) {
+	ms.Ids++
 	adv.MainPhotoUrl = adv.PhotosUrls[0]
+	adv.Id = ms.Ids
+
 	for i := 0; i < len(ms.Adverts); i++ {
-		if ms.Adverts[i].Id == adv.Id {
+		if ms.Adverts[i].Name == adv.Name {
 			return 0, entity.ErrNameAlreadyExist
 		}
 	}
 	ms.Adverts = append(ms.Adverts, adv)
 
-	return 0, nil
+	return ms.Ids, nil
 }
 
-func (ms *MockService) GetById(ctx context.Context, id int64) (*entity.Advert, error) {
+func (ms *MockService) GetById(ctx context.Context, id int64) (entity.Advert, error) {
+
+	for i := 0; i < len(ms.Adverts); i++ {
+		if ms.Adverts[i].Id == id {
+			adv := ms.Adverts[i]
+			adv.Id = 0
+			return adv, nil
+		}
+	}
+	return entity.Advert{}, entity.ErrItemNotExists
+}
+
+func (ms *MockService) getById(ctx context.Context, id int64) (*entity.Advert, error) {
 	for i := 0; i < len(ms.Adverts); i++ {
 		if ms.Adverts[i].Id == id {
 			return &ms.Adverts[i], nil
@@ -42,11 +58,12 @@ func (ms *MockService) GetAll(ctx context.Context) ([]entity.Advert, error) {
 	if len(ms.Adverts) == 0 {
 		return nil, entity.ErrNoItems
 	}
+
 	return ms.Adverts, nil
 }
 
 func (ms *MockService) Update(ctx context.Context, adv entity.Advert) error {
-	exist, err := ms.GetById(ctx, adv.Id)
+	exist, err := ms.getById(ctx, adv.Id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return entity.ErrItemNotExists

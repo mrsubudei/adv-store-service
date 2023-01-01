@@ -7,31 +7,22 @@ type Answer interface {
 }
 
 type ErrMessage struct {
-	Error  string `json:"error"`
-	Detail string `json:"detail"`
+	Error  string `json:"error,omitempty"`
+	Detail string `json:"detail,omitempty"`
 	code   int
 }
 
-type SingleResponse struct {
-	Data entity.Advert `json:"data"`
-	code int
-}
-
-type MultiResponse struct {
-	Meta MetaData        `json:"meta_data"`
-	Data []entity.Advert `json:"data"`
+type Response struct {
+	Meta *MetaData       `json:"meta_data,omitempty"`
+	Data []entity.Advert `json:"data,omitempty"`
 	code int
 }
 
 type MetaData struct {
-	MaxPage int64 `json:"max_page"`
+	MaxPage int64 `json:"max_page,omitempty"`
 }
 
-func (r SingleResponse) getCode() int {
-	return r.code
-}
-
-func (r MultiResponse) getCode() int {
+func (r Response) getCode() int {
 	return r.code
 }
 
@@ -39,21 +30,17 @@ func (e ErrMessage) getCode() int {
 	return e.code
 }
 
-type Pagination struct {
-	Limit   int
-	Offset  int
-	SortBy  string
-	OrderBy string
-}
-
 const (
+	ItemNameExists     = "item with name '%v' already exists"
+	JsonNotCorrect     = "json format is not correct"
+	NoContentFound     = "no content found with id: "
 	WrongQueryRequest  = "queries have wrong value"
 	EmptyFiledRequest  = "request has empty fields"
 	WrongDataFormat    = "wrong data format"
 	AdvertCreated      = "advert created"
-	DescLengthExceeded = "description length exceeded"
-	NameLengthExceeded = "name length exceeded"
-	UrlsNumberExceeded = "photo_urls quantity exceeded"
+	DescLengthExceeded = "'description:' field's length exceeded"
+	NameLengthExceeded = "'name:' field's length exceeded"
+	UrlsNumberExceeded = "'photo_urls:' field's quantity exceeded"
 )
 
 const (

@@ -182,6 +182,10 @@ func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
 		adverts = append(adverts, advert)
 	}
 
+	if len(adverts) == 0 {
+		return adverts, nil
+	}
+
 	count := adverts[0].MaxCount
 	if count%int64(limit) != 0 {
 		adverts[0].MaxCount = count/int64(limit) + 1
