@@ -8,7 +8,7 @@ import (
 	"strings"
 	"unicode/utf8"
 
-	"github.com/clarketm/json"
+	"encoding/json"
 
 	"github.com/mrsubudei/adv-store-service/internal/config"
 	"github.com/mrsubudei/adv-store-service/internal/entity"
@@ -92,6 +92,17 @@ func (h *Handler) parseJson(w http.ResponseWriter, r *http.Request, adv *entity.
 	return nil
 }
 
+func MarshalJSON(r Response) ([]byte, error) {
+	return json.Marshal(struct {
+		Meta *MetaData       `json:"meta_data,omitempty"`
+		Data []entity.Advert `json:"data,omitempty"`
+		code int
+	}{
+		Meta: r.Meta,
+		Data: r.Data,
+	})
+}
+
 func (h *Handler) writeResponse(w http.ResponseWriter, ans Answer) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	jsonResp, err := json.Marshal(ans)
@@ -101,7 +112,9 @@ func (h *Handler) writeResponse(w http.ResponseWriter, ans Answer) {
 		return
 	}
 	w.WriteHeader(ans.getCode())
-	w.Write(jsonResp)
+	if _, err = w.Write(jsonResp); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 func (h *Handler) checkData(adv entity.Advert) ErrMessage {

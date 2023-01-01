@@ -162,8 +162,12 @@ func TestGetAllAdverts(t *testing.T) {
 		}
 	})
 
-	handler.Service.Create(ctx, advert1)
-	handler.Service.Create(ctx, advert2)
+	if _, err := handler.Service.Create(ctx, advert1); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := handler.Service.Create(ctx, advert2); err != nil {
+		t.Fatal(err)
+	}
 
 	t.Run("OK", func(t *testing.T) {
 		rec := httptest.NewRecorder()
@@ -178,8 +182,13 @@ func TestGetAllAdverts(t *testing.T) {
 
 func TestGetAdvert(t *testing.T) {
 	handler := setup()
-	handler.Service.Create(context.Background(), advert1)
-	handler.Service.Create(context.Background(), advert2)
+	ctx := context.Background()
+	if _, err := handler.Service.Create(ctx, advert1); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := handler.Service.Create(ctx, advert2); err != nil {
+		t.Fatal(err)
+	}
 
 	tests := []struct {
 		name       string
@@ -224,7 +233,9 @@ func TestGetAdvert(t *testing.T) {
 
 func TestUpdateAdvert(t *testing.T) {
 	handler := setup()
-	handler.Service.Create(context.Background(), advert1)
+	if _, err := handler.Service.Create(context.Background(), advert1); err != nil {
+		t.Fatal(err)
+	}
 
 	tests := []struct {
 		name       string
@@ -266,7 +277,9 @@ func TestUpdateAdvert(t *testing.T) {
 
 func TestDeleteAdvert(t *testing.T) {
 	handler := setup()
-	handler.Service.Create(context.Background(), advert1)
+	if _, err := handler.Service.Create(context.Background(), advert1); err != nil {
+		t.Fatal(err)
+	}
 
 	tests := []struct {
 		name       string
