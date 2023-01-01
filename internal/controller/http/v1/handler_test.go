@@ -54,6 +54,13 @@ func TestParticularGroup(t *testing.T) {
 			wantStatus: http.StatusMethodNotAllowed,
 			wantResult: `{}`,
 		},
+		{
+			name:       "Error wrong route",
+			url:        "/abc",
+			method:     "POST",
+			wantStatus: http.StatusNotFound,
+			wantResult: `{}`,
+		},
 	}
 
 	for _, tt := range tests {

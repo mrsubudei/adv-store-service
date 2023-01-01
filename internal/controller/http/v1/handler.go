@@ -118,10 +118,10 @@ func (h *Handler) checkData(adv entity.Advert) ErrMessage {
 		errMsg.Detail = UrlsNumberExceeded
 	case adv.Name == "":
 		errMsg.Error = EmptyFiledRequest
-		errMsg.Detail = "'name:' field is required"
+		errMsg.Detail = `'name:' field is required`
 	case adv.Description == "":
 		errMsg.Error = EmptyFiledRequest
-		errMsg.Detail = `'description:' field is required"`
+		errMsg.Detail = `'description:' field is required`
 	case adv.Price == 0:
 		errMsg.Error = EmptyFiledRequest
 		errMsg.Detail = `'price:' field is required`

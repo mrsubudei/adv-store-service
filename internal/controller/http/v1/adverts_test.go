@@ -7,6 +7,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"encoding/json"
+
 	"github.com/mrsubudei/adv-store-service/internal/entity"
 )
 
@@ -35,6 +37,25 @@ var (
 
 func TestCreateAdvert(t *testing.T) {
 	handler := setup()
+	longName := ""
+	for i := 0; i < 201; i++ {
+		longName += "a"
+	}
+	longDescription := ""
+	for i := 0; i < 1001; i++ {
+		longDescription += "a"
+	}
+
+	reqWithLongName := entity.Advert{Name: longName}
+	jsonLongName, err := json.Marshal(reqWithLongName)
+	if err != nil {
+		t.Fatal(err)
+	}
+	reqWithLongDesc := entity.Advert{Name: "abc", Description: longDescription}
+	jsonLongDesc, err := json.Marshal(reqWithLongDesc)
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	tests := []struct {
 		name       string
@@ -56,6 +77,18 @@ func TestCreateAdvert(t *testing.T) {
 			wantResult: `{"error":"item with name 'car' already exists"}`,
 		},
 		{
+			name:       "Error too long name",
+			reqData:    string(jsonLongName),
+			wantStatus: http.StatusBadRequest,
+			wantResult: `{"error":"Request Entity Too Large","detail":"'name:' field's length exceeded"}`,
+		},
+		{
+			name:       "Error too long description",
+			reqData:    string(jsonLongDesc),
+			wantStatus: http.StatusBadRequest,
+			wantResult: `{"error":"Request Entity Too Large","detail":"'description:' field's length exceeded"}`,
+		},
+		{
 			name:       "Error wrong data format",
 			reqData:    `{"name":5}`,
 			wantStatus: http.StatusBadRequest,
@@ -70,11 +103,30 @@ func TestCreateAdvert(t *testing.T) {
 			wantResult: `{"error":"Request Entity Too Large","detail":"'photo_urls:' field's quantity exceeded"}`,
 		},
 		{
-			name: "Error empty field",
+			name: "Error empty field: name",
 			reqData: `{"description":"asd","price":40,
 			"photo_urls":["http://files.com/12","http://files.com/13"]}`,
 			wantStatus: http.StatusBadRequest,
 			wantResult: `{"error":"request has empty fields","detail":"'name:' field is required"}`,
+		},
+		{
+			name: "Error empty field: description",
+			reqData: `{"name":"first item","price":40,
+			"photo_urls":["http://files.com/12","http://files.com/13"]}`,
+			wantStatus: http.StatusBadRequest,
+			wantResult: `{"error":"request has empty fields","detail":"'description:' field is required"}`,
+		},
+		{
+			name:       "Error empty field: price",
+			reqData:    `{"name":"first item","description":"asd"}`,
+			wantStatus: http.StatusBadRequest,
+			wantResult: `{"error":"request has empty fields","detail":"'price:' field is required"}`,
+		},
+		{
+			name:       "Error empty field: photo_urls",
+			reqData:    `{"name":"first item","description":"asd","price":40}`,
+			wantStatus: http.StatusBadRequest,
+			wantResult: `{"error":"request has empty fields","detail":"'photo_urls:' field should have at least 1 url"}`,
 		},
 	}
 	for _, tt := range tests {

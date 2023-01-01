@@ -27,7 +27,7 @@ func setup() *v1.Handler {
 	return handler
 }
 
-func getMockHandler(t *testing.T) http.HandlerFunc {
+func getMockHandler() http.HandlerFunc {
 	mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
 		limit := 0
@@ -112,7 +112,7 @@ func TestParseQuery(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			mockHandler := getMockHandler(t)
+			mockHandler := getMockHandler()
 			handlerToTest := handler.ParseQuery(mockHandler)
 			rec := httptest.NewRecorder()
 			req := httptest.NewRequest(http.MethodGet, tt.url, nil)
