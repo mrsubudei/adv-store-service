@@ -207,3 +207,15 @@ ERROR 2023/01/01 14:07:08 v1 - NewPluralRoutes - Atoi: strconv.Atoi: parsing "ad
 ERROR 2023/01/01 14:09:15 v1 - NewPluralRoutes - Atoi: strconv.Atoi: parsing "": invalid syntax
 ERROR 2023/01/01 14:09:20 v1 - NewPluralRoutes - Atoi: strconv.Atoi: parsing "": invalid syntax
 INFO: 2023/01/01 14:14:28 v1 - GetAllAdverts - h.Service.GetAll: there are no items
+INFO: 2023/01/01 14:35:24 v1 - CreateAdvert - h.Service.Create: name already exists
+INFO: 2023/01/01 14:35:24 v1 - CreateAdvert - parseJson: wrong data format
+INFO: 2023/01/01 14:35:24 v1 - GetAllAdverts - h.Service.GetAll: there are no items
+INFO: 2023/01/01 14:35:24 v1 - GetAdvert - h.Service.GetById: item does not exist
+INFO: 2023/01/01 14:35:24 v1 - UpdateAdvert - h.Service.Update: AdvertService - Update: item does not exist
+INFO: 2023/01/01 14:35:24 v1 - DeleteAdvert - h.Service.Delete: item does not exist
+INFO: 2023/01/01 14:57:51 v1 - CreateAdvert - h.Service.Create: name already exists
+INFO: 2023/01/01 14:57:51 v1 - CreateAdvert - parseJson: wrong data format
+INFO: 2023/01/01 14:57:51 v1 - GetAllAdverts - h.Service.GetAll: there are no items
+INFO: 2023/01/01 14:57:51 v1 - GetAdvert - h.Service.GetById: item does not exist
+INFO: 2023/01/01 14:57:51 v1 - UpdateAdvert - h.Service.Update: AdvertService - Update: item does not exist
+INFO: 2023/01/01 14:57:51 v1 - DeleteAdvert - h.Service.Delete: item does not exist

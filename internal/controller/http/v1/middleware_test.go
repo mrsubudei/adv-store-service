@@ -8,6 +8,7 @@ import (
 
 	"github.com/mrsubudei/adv-store-service/internal/config"
 	v1 "github.com/mrsubudei/adv-store-service/internal/controller/http/v1"
+	"github.com/mrsubudei/adv-store-service/internal/entity"
 	mock "github.com/mrsubudei/adv-store-service/internal/service/mock"
 	"github.com/mrsubudei/adv-store-service/pkg/logger"
 )
@@ -26,37 +27,103 @@ func setup() *v1.Handler {
 	return handler
 }
 
-func getMockHandler(t *testing.T, key string) http.HandlerFunc {
+func getMockHandler(t *testing.T) http.HandlerFunc {
 	mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+
+		limit := 0
+		offset := 0
+		sortBy := ""
+		orderBy := ""
+		if val, ok := r.Context().Value(entity.KeyLimit).(int); ok && val != 0 {
+			limit = val
+		}
+		if val, ok := r.Context().Value(entity.KeyOffset).(int); ok && val != 0 {
+			offset = val
+		}
+		if val, ok := r.Context().Value(entity.KeySortBy).(string); ok && val != "" {
+			if val == "price" {
+				sortBy = val
+			}
+		}
+		if val, ok := r.Context().Value(entity.KeyOrderBy).(string); ok && val != "" {
+			orderBy = val
+		}
+		if limit != 0 && offset != 0 && sortBy != "" && orderBy != "" {
+			w.WriteHeader(http.StatusOK)
+		} else {
+			w.WriteHeader(http.StatusBadRequest)
+		}
 
 	})
 	return mockHandler
 }
 
-func TestCheckAuth(t *testing.T) {
-	// handler := setup()
+func TestParseQuery(t *testing.T) {
+	handler := setup()
 
-	t.Run("OK", func(t *testing.T) {
-		// if err := handler.Usecases.Users.SignUp(entity.User{}); err != nil {
-		// 	t.Fatal(err)
-		// }
+	tests := []struct {
+		name       string
+		url        string
+		wantStatus int
+		wantResult string
+	}{
+		{
+			name:       "OK",
+			url:        "/v1/adverts?limit=10&offset=20&sort_by=price&order_by=asc",
+			wantStatus: http.StatusOK,
+		},
+		{
+			name:       "Error wrong query: fields",
+			url:        "/v1/adverts?fields=abc",
+			wantStatus: http.StatusBadRequest,
+			wantResult: `{"error":"queries have wrong value","detail":"'fields=' query value should be 'true'"}`,
+		},
+		{
+			name:       "Error wrong query: sort_by",
+			url:        "/v1/adverts?sort_by=abc",
+			wantStatus: http.StatusBadRequest,
+			wantResult: `{"error":"queries have wrong value","detail":"'sort_by=' query value should be either 'created_at' or 'price'"}`,
+		},
+		{
+			name:       "Error wrong query: order_by",
+			url:        "/v1/adverts?order_by=abc",
+			wantStatus: http.StatusBadRequest,
+			wantResult: `{"error":"queries have wrong value","detail":"'order_by=' query value should be either 'asc' or 'desc'"}`,
+		},
+		{
+			name:       "Error wrong query: offset",
+			url:        "/v1/adverts?offset=abc",
+			wantStatus: http.StatusBadRequest,
+			wantResult: `{"error":"queries have wrong value","detail":"'offset=' query value should be positive number"}`,
+		},
+		{
+			name:       "Error wrong query: limit",
+			url:        "/v1/adverts?limit=abc",
+			wantStatus: http.StatusBadRequest,
+			wantResult: `{"error":"queries have wrong value","detail":"'limit=' query value should be positive number"}`,
+		},
+		{
+			name:       "Error wrong query: limit",
+			url:        "/v1/adverts?limit=abc",
+			wantStatus: http.StatusBadRequest,
+			wantResult: `{"error":"queries have wrong value","detail":"'limit=' query value should be positive number"}`,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
 
-		// mockHandler := getMockHandlerOne(t, "content")
+			mockHandler := getMockHandler(t)
+			handlerToTest := handler.ParseQuery(mockHandler)
+			rec := httptest.NewRecorder()
+			req := httptest.NewRequest(http.MethodGet, tt.url, nil)
 
-		// handlerToTest := handler.CheckAuth(mockHandler)
+			handlerToTest.ServeHTTP(rec, req)
 
-		rec := httptest.NewRecorder()
-		req := httptest.NewRequest(http.MethodGet, "http://testing", nil)
-		cookie := &http.Cookie{
-			Name: "session_token",
-		}
-
-		req.AddCookie(cookie)
-		// handlerToTest.ServeHTTP(rec, req)
-
-		if rec.Code != http.StatusOK {
-			t.Fatalf("want: %v, got: %v", http.StatusOK, rec.Code)
-		}
-	})
-
+			if rec.Code != tt.wantStatus {
+				t.Fatalf("want: %v, got: %v", tt.wantStatus, rec.Code)
+			} else if rec.Body.String() != tt.wantResult {
+				t.Fatalf("want: %v, got: %v", tt.wantResult, rec.Body.String())
+			}
+		})
+	}
 }

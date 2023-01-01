@@ -143,9 +143,7 @@ func (ar *AdvertsRepo) Fetch(ctx context.Context) ([]entity.Advert, error) {
 		offset = val
 	}
 	if val, ok := ctx.Value(entity.KeySortBy).(string); ok && val != "" {
-		if val == "price" {
-			sortBy = val
-		}
+		sortBy = val
 	}
 	if val, ok := ctx.Value(entity.KeyOrderBy).(string); ok && val != "" {
 		orderBy = val
