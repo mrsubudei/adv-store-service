@@ -26,12 +26,12 @@ func setup() *v1.Handler {
 	return handler
 }
 
-// func getMockHandler(t *testing.T, key string) http.HandlerFunc {
-// 	mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func getMockHandler(t *testing.T, key string) http.HandlerFunc {
+	mockHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
-// 	})
-// 	return mockHandler
-// }
+	})
+	return mockHandler
+}
 
 func TestCheckAuth(t *testing.T) {
 	// handler := setup()

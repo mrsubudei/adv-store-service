@@ -206,3 +206,4 @@ INFO: 2023/01/01 14:01:12 v1 - DeleteAdvert - h.Service.Delete: item does not ex
 ERROR 2023/01/01 14:07:08 v1 - NewPluralRoutes - Atoi: strconv.Atoi: parsing "adc": invalid syntax
 ERROR 2023/01/01 14:09:15 v1 - NewPluralRoutes - Atoi: strconv.Atoi: parsing "": invalid syntax
 ERROR 2023/01/01 14:09:20 v1 - NewPluralRoutes - Atoi: strconv.Atoi: parsing "": invalid syntax
+INFO: 2023/01/01 14:14:28 v1 - GetAllAdverts - h.Service.GetAll: there are no items
