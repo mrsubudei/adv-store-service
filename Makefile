@@ -17,5 +17,6 @@ remove:
 		@docker rmi $(name)
 kill:   stop remove
 
+.PHONY: test
 test:
-  		go test ./...
+		go test -v ./...
