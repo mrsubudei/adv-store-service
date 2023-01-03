@@ -10,8 +10,7 @@ This project is implimintation of RESTful api which allow to store, get, update 
 - [Get advert](#get-advert)
 - [Get all adverts](#get-all-adverts)
 - [Update advert](#update-advert)
-- [Delete advert](#delete-advert)  
-
+- [Delete advert](#delete-advert)
 - [Usage](#usage)
   
 **Status codes**
