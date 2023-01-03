@@ -108,9 +108,14 @@ func (h *Handler) UpdateAdvert(w http.ResponseWriter, r *http.Request) {
 	err = h.Service.Update(r.Context(), adv)
 	if err != nil {
 		if errors.Is(err, entity.ErrItemNotExists) {
-			h.l.WriteLog(fmt.Errorf("v1 - UpdateAdvert - h.Service.Update: %w", err))
+			h.l.WriteLog(fmt.Errorf("v1 - UpdateAdvert - h.Service.Update #1: %w", err))
 			h.writeResponse(w, ErrMessage{code: http.StatusNotFound,
 				Error: NoContentFound + strconv.Itoa(int(id))})
+			return
+		} else if errors.Is(err, entity.ErrNameAlreadyExist) {
+			h.l.WriteLog(fmt.Errorf("v1 - UpdateAdvert - h.Service.Update #2: %w", err))
+			h.writeResponse(w, ErrMessage{code: http.StatusConflict,
+				Error: fmt.Sprintf(ItemNameExists, adv.Name)})
 			return
 		}
 		h.l.WriteLog(fmt.Errorf("v1 - UpdateAdvert - h.Service.Create: %w", err))

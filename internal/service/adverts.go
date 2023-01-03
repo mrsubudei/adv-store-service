@@ -94,8 +94,11 @@ func (s *AdvertService) Update(ctx context.Context, adv entity.Advert) error {
 	}
 
 	err = s.repo.Update(ctx, exist)
-
 	if err != nil {
+		if strings.Contains(err.Error(), UniqueNameConstraint) {
+
+			return entity.ErrNameAlreadyExist
+		}
 		return fmt.Errorf("AdvertService - Update: %w", err)
 	}
 

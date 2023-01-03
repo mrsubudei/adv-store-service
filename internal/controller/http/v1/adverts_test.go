@@ -258,6 +258,13 @@ func TestUpdateAdvert(t *testing.T) {
 			reqData:    `{"name":"new name","photo_urls":["http://files.com/12","http://files.com/13"]}`,
 			wantResult: `{"error":"no content found with id: 5"}`,
 		},
+		{
+			name:       "Error item with that name already exists",
+			wantStatus: http.StatusConflict,
+			url:        "/v1/adverts/1",
+			reqData:    `{"name":"new name","photo_urls":["http://files.com/12","http://files.com/13"]}`,
+			wantResult: `{"error":"item with name 'new name' already exists"}`,
+		},
 	}
 
 	for _, tt := range tests {

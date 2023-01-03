@@ -70,6 +70,11 @@ func (ms *MockService) Update(ctx context.Context, adv entity.Advert) error {
 		}
 		return fmt.Errorf("AdvertService - Update: %w", err)
 	}
+	fmt.Println(exist)
+	fmt.Println(adv)
+	if exist.Name == adv.Name {
+		return entity.ErrNameAlreadyExist
+	}
 
 	if adv.Name != "" {
 		exist.Name = adv.Name
