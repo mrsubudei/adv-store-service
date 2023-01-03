@@ -92,17 +92,6 @@ func (h *Handler) parseJson(w http.ResponseWriter, r *http.Request, adv *entity.
 	return nil
 }
 
-func MarshalJSON(r Response) ([]byte, error) {
-	return json.Marshal(struct {
-		Meta *MetaData       `json:"meta_data,omitempty"`
-		Data []entity.Advert `json:"data,omitempty"`
-		code int
-	}{
-		Meta: r.Meta,
-		Data: r.Data,
-	})
-}
-
 func (h *Handler) writeResponse(w http.ResponseWriter, ans Answer) {
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	jsonResp, err := json.Marshal(ans)
