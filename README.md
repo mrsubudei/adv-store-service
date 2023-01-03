@@ -238,7 +238,7 @@ The following table shows the possible return codes for API requests.
 }
 ```
 
-* **Error Response:**
+* **No items Response:**
 
   * *There is no items*
   * **Code:** 200 OK <br />
