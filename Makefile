@@ -20,3 +20,7 @@ kill:   stop remove
 .PHONY: test
 test:
 		go test -v ./...
+
+.PHONY: go
+go:
+		go run cmd/main.go
