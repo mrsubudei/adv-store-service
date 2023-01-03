@@ -146,7 +146,7 @@ func (h *Handler) DeleteAdvert(w http.ResponseWriter, r *http.Request) {
 	}
 
 	ans := Response{
-		code: http.StatusOK,
+		code: http.StatusNoContent,
 	}
 	h.writeResponse(w, ans)
 }

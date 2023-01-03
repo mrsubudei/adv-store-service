@@ -323,7 +323,7 @@ The following table shows the possible return codes for API requests.
 
 * **Success Response:**
 
-  * **Code:** 200 OK <br />
+  * **Code:** 204 NO CONTENT <br />
     **Content:** 
 
 ```json

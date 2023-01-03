@@ -296,7 +296,7 @@ func TestDeleteAdvert(t *testing.T) {
 	}{
 		{
 			name:       "OK",
-			wantStatus: http.StatusOK,
+			wantStatus: http.StatusNoContent,
 			url:        "/v1/adverts/1",
 			wantResult: `{}`,
 		},
