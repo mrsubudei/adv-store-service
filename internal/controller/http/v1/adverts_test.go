@@ -37,14 +37,9 @@ var (
 
 func TestCreateAdvert(t *testing.T) {
 	handler := setup()
-	longName := ""
-	for i := 0; i < 201; i++ {
-		longName += "a"
-	}
-	longDescription := ""
-	for i := 0; i < 1001; i++ {
-		longDescription += "a"
-	}
+	longName := string(make([]byte, 201))
+
+	longDescription := string(make([]byte, 1001))
 
 	reqWithLongName := entity.Advert{Name: longName}
 	jsonLongName, err := json.Marshal(reqWithLongName)

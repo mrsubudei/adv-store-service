@@ -1,0 +1,53 @@
+INFO: 2023/01/07 20:40:48 v1 - CreateAdvert - h.Service.Create: name already exists
+INFO: 2023/01/07 20:40:48 v1 - CreateAdvert - parseJson: wrong data format
+INFO: 2023/01/07 20:40:48 v1 - GetAllAdverts - h.Service.GetAll: there are no items
+INFO: 2023/01/07 20:40:48 v1 - GetAdvert - h.Service.GetById: item does not exist
+INFO: 2023/01/07 20:40:48 v1 - UpdateAdvert - h.Service.Update #1: AdvertService - Update: item does not exist
+INFO: 2023/01/07 20:40:48 v1 - UpdateAdvert - h.Service.Update #2: name already exists
+INFO: 2023/01/07 20:40:48 v1 - DeleteAdvert - h.Service.Delete: item does not exist
+INFO: 2023/01/07 20:40:58 v1 - CreateAdvert - h.Service.Create: name already exists
+INFO: 2023/01/07 20:40:58 v1 - CreateAdvert - parseJson: wrong data format
+INFO: 2023/01/07 20:41:04 v1 - CreateAdvert - h.Service.Create: name already exists
+INFO: 2023/01/07 20:41:04 v1 - CreateAdvert - parseJson: wrong data format
+INFO: 2023/01/07 20:57:09 v1 - CreateAdvert - h.Service.Create: name already exists
+INFO: 2023/01/07 20:57:09 v1 - CreateAdvert - parseJson: wrong data format
+INFO: 2023/01/07 20:57:09 v1 - GetAllAdverts - h.Service.GetAll: there are no items
+INFO: 2023/01/07 20:57:09 v1 - GetAdvert - h.Service.GetById: item does not exist
+INFO: 2023/01/07 20:57:09 v1 - UpdateAdvert - h.Service.Update #1: AdvertService - Update: item does not exist
+INFO: 2023/01/07 20:57:09 v1 - UpdateAdvert - h.Service.Update #2: name already exists
+INFO: 2023/01/07 20:57:09 v1 - DeleteAdvert - h.Service.Delete: item does not exist
+INFO: 2023/01/07 20:59:52 v1 - CreateAdvert - h.Service.Create: name already exists
+INFO: 2023/01/07 20:59:52 v1 - CreateAdvert - parseJson: wrong data format
+INFO: 2023/01/07 20:59:52 v1 - GetAllAdverts - h.Service.GetAll: there are no items
+INFO: 2023/01/07 20:59:52 v1 - GetAdvert - h.Service.GetById: item does not exist
+INFO: 2023/01/07 20:59:52 v1 - UpdateAdvert - h.Service.Update #1: AdvertService - Update: item does not exist
+INFO: 2023/01/07 20:59:52 v1 - UpdateAdvert - h.Service.Update #2: name already exists
+INFO: 2023/01/07 20:59:52 v1 - DeleteAdvert - h.Service.Delete: item does not exist
+INFO: 2023/01/07 21:09:54 v1 - CreateAdvert - h.Service.Create: name already exists
+INFO: 2023/01/07 21:09:54 v1 - CreateAdvert - parseJson: wrong data format
+INFO: 2023/01/07 21:09:54 v1 - GetAllAdverts - h.Service.GetAll: there are no items
+INFO: 2023/01/07 21:09:54 v1 - GetAdvert - h.Service.GetById: item does not exist
+INFO: 2023/01/07 21:09:54 v1 - UpdateAdvert - h.Service.Update #1: AdvertService - Update: item does not exist
+INFO: 2023/01/07 21:09:54 v1 - UpdateAdvert - h.Service.Update #2: name already exists
+INFO: 2023/01/07 21:09:54 v1 - DeleteAdvert - h.Service.Delete: item does not exist
+INFO: 2023/01/07 21:10:57 v1 - CreateAdvert - h.Service.Create: name already exists
+INFO: 2023/01/07 21:10:57 v1 - CreateAdvert - parseJson: wrong data format
+INFO: 2023/01/07 21:10:57 v1 - GetAllAdverts - h.Service.GetAll: there are no items
+INFO: 2023/01/07 21:10:57 v1 - GetAdvert - h.Service.GetById: item does not exist
+INFO: 2023/01/07 21:10:57 v1 - UpdateAdvert - h.Service.Update #1: AdvertService - Update: item does not exist
+INFO: 2023/01/07 21:10:57 v1 - UpdateAdvert - h.Service.Update #2: name already exists
+INFO: 2023/01/07 21:10:57 v1 - DeleteAdvert - h.Service.Delete: item does not exist
+INFO: 2023/01/07 21:11:44 v1 - CreateAdvert - h.Service.Create: name already exists
+INFO: 2023/01/07 21:11:44 v1 - CreateAdvert - parseJson: wrong data format
+INFO: 2023/01/07 21:11:44 v1 - GetAllAdverts - h.Service.GetAll: there are no items
+INFO: 2023/01/07 21:11:44 v1 - GetAdvert - h.Service.GetById: item does not exist
+INFO: 2023/01/07 21:11:44 v1 - UpdateAdvert - h.Service.Update #1: AdvertService - Update: item does not exist
+INFO: 2023/01/07 21:11:44 v1 - UpdateAdvert - h.Service.Update #2: name already exists
+INFO: 2023/01/07 21:11:44 v1 - DeleteAdvert - h.Service.Delete: item does not exist
+INFO: 2023/01/07 21:11:47 v1 - CreateAdvert - h.Service.Create: name already exists
+INFO: 2023/01/07 21:11:47 v1 - CreateAdvert - parseJson: wrong data format
+INFO: 2023/01/07 21:11:47 v1 - GetAllAdverts - h.Service.GetAll: there are no items
+INFO: 2023/01/07 21:11:47 v1 - GetAdvert - h.Service.GetById: item does not exist
+INFO: 2023/01/07 21:11:47 v1 - UpdateAdvert - h.Service.Update #1: AdvertService - Update: item does not exist
+INFO: 2023/01/07 21:11:47 v1 - UpdateAdvert - h.Service.Update #2: name already exists
+INFO: 2023/01/07 21:11:47 v1 - DeleteAdvert - h.Service.Delete: item does not exist
